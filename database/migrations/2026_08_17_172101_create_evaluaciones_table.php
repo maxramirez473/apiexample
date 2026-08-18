@@ -16,7 +16,6 @@ return new class extends Migration
             $table->string('nombre', 20);
             $table->integer('nota_minima_aprobacion');
             $table->integer('nota_minima_promocion');
-            $table->date('fecha_evaluacion');
             $table->timestamps();
         });
     }

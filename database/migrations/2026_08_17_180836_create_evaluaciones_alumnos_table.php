@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->foreignId('evaluacion_id')->constrained('evaluaciones')->onDelete('cascade');
             $table->foreignId('alumno_id')->constrained('alumnos')->onDelete('cascade');
-            $table->integer('nota_obtenida')->unsigned()->min(0)->max(10);
+            $table->integer('nota')->unsigned()->min(0)->max(10);
             $table->date('fecha_evaluacion');
+            $table->unique(['alumno_id', 'evaluacion_id']);
             $table->timestamps();
         });
     }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('Nombres', 50);
             $table->string('Apellidos', 50);
             $table->string('email',50);
+            $table->foreignId('grupo_id')->constrained('grupos');
             $table->timestamps();
         });
     }

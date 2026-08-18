@@ -18,6 +18,7 @@ return new class extends Migration
             $table->date('fecha_entrega');
             $table->string('archivo', 250);
             $table->string('comentario', 250);
+            $table->unique('entrega_id', 'grupo_id');
             $table->timestamps();
         });
     }
