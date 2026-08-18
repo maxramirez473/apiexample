@@ -21,7 +21,7 @@ class EntregaSeeder extends Seeder
         ];
 
         foreach ($entregas as $entrega) {
-            Entrega::createIfNotExists($entrega);
+            Entrega::create($entrega);
         }
     }
 }
