@@ -1,0 +1,412 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "API REST Example",
+        "description": "API para gestionar alumnos, grupos y evaluaciones",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/api/alumnos": {
+            "get": {
+                "tags": [
+                    "Alumnos"
+                ],
+                "summary": "Listar alumnos",
+                "operationId": "getAlumnos",
+                "responses": {
+                    "200": {
+                        "description": "Listado de alumnos",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Alumno"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Alumnos"
+                ],
+                "summary": "Crear alumno",
+                "operationId": "createAlumno",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "legajo",
+                                    "nombres",
+                                    "apellidos",
+                                    "email",
+                                    "grupo_id"
+                                ],
+                                "properties": {
+                                    "legajo": {
+                                        "type": "integer",
+                                        "example": 1234
+                                    },
+                                    "nombres": {
+                                        "type": "string",
+                                        "example": "Ana"
+                                    },
+                                    "apellidos": {
+                                        "type": "string",
+                                        "example": "García"
+                                    },
+                                    "email": {
+                                        "type": "string",
+                                        "example": "ana@correo.com"
+                                    },
+                                    "grupo_id": {
+                                        "type": "integer",
+                                        "example": 2
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Alumno creado"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                }
+            }
+        },
+        "/api/alumnos/{id}": {
+            "get": {
+                "tags": [
+                    "Alumnos"
+                ],
+                "summary": "Obtener alumno por id",
+                "operationId": "getAlumnoById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alumno encontrado",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Alumno"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Alumno no encontrado"
+                    }
+                }
+            }
+        },
+        "/api/alumnos/{id}/evaluaciones": {
+            "get": {
+                "tags": [
+                    "Alumnos"
+                ],
+                "summary": "Listar evaluaciones del alumno",
+                "operationId": "getAlumnoEvaluaciones",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Listado de evaluaciones"
+                    }
+                }
+            },
+            "post": {
+                "tags": [
+                    "Alumnos"
+                ],
+                "summary": "Asignar evaluación a un alumno",
+                "operationId": "associateAlumnoEvaluacion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "evaluacion_id",
+                                    "nota",
+                                    "fecha_evaluacion"
+                                ],
+                                "properties": {
+                                    "evaluacion_id": {
+                                        "type": "integer",
+                                        "example": 1
+                                    },
+                                    "nota": {
+                                        "type": "number",
+                                        "example": 8
+                                    },
+                                    "fecha_evaluacion": {
+                                        "type": "string",
+                                        "format": "date",
+                                        "example": "2026-08-20"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Evaluación asociada correctamente"
+                    },
+                    "409": {
+                        "description": "La relación ya existe"
+                    },
+                    "422": {
+                        "description": "Payload inválido"
+                    }
+                }
+            }
+        },
+        "/api/grupos/{grupo}/entregas": {
+            "post": {
+                "tags": [
+                    "Entregas"
+                ],
+                "summary": "Crear entrega sin idempotencia",
+                "operationId": "createEntregaSinIdempotencia",
+                "parameters": [
+                    {
+                        "name": "grupo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "entrega",
+                                    "archivo",
+                                    "comentario"
+                                ],
+                                "properties": {
+                                    "entrega": {
+                                        "required": [
+                                            "nombre",
+                                            "fecha_entrega"
+                                        ],
+                                        "properties": {
+                                            "nombre": {
+                                                "type": "string",
+                                                "example": "TP 1"
+                                            },
+                                            "fecha_entrega": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-08-20"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "archivo": {
+                                        "type": "string",
+                                        "example": "archivo.pdf"
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Entrega del grupo"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Entrega asociada correctamente"
+                    },
+                    "409": {
+                        "description": "Conflicto de datos duplicados"
+                    },
+                    "422": {
+                        "description": "Payload inválido"
+                    }
+                }
+            }
+        },
+        "/api/grupos/{grupo}/entregas/idempotent": {
+            "post": {
+                "tags": [
+                    "Entregas"
+                ],
+                "summary": "Crear entrega con idempotencia",
+                "operationId": "createEntregaConIdempotencia",
+                "parameters": [
+                    {
+                        "name": "grupo",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    },
+                    {
+                        "name": "Idempotency-Key",
+                        "in": "header",
+                        "description": "Clave para evitar reenvíos duplicados",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "entrega",
+                                    "archivo",
+                                    "comentario"
+                                ],
+                                "properties": {
+                                    "entrega": {
+                                        "required": [
+                                            "nombre",
+                                            "fecha_entrega"
+                                        ],
+                                        "properties": {
+                                            "nombre": {
+                                                "type": "string",
+                                                "example": "TP 1"
+                                            },
+                                            "fecha_entrega": {
+                                                "type": "string",
+                                                "format": "date",
+                                                "example": "2026-08-20"
+                                            }
+                                        },
+                                        "type": "object"
+                                    },
+                                    "archivo": {
+                                        "type": "string",
+                                        "example": "archivo.pdf"
+                                    },
+                                    "comentario": {
+                                        "type": "string",
+                                        "example": "Entrega del grupo"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Entrega creada con idempotencia"
+                    },
+                    "200": {
+                        "description": "Reintento repetido con la misma clave"
+                    },
+                    "409": {
+                        "description": "Conflicto de datos duplicados"
+                    },
+                    "422": {
+                        "description": "Falta Idempotency-Key o payload inválido"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Alumno": {
+                "required": [
+                    "legajo",
+                    "nombres",
+                    "apellidos",
+                    "email",
+                    "grupo_id"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "legajo": {
+                        "type": "integer",
+                        "example": 1234
+                    },
+                    "nombres": {
+                        "type": "string",
+                        "example": "Ana"
+                    },
+                    "apellidos": {
+                        "type": "string",
+                        "example": "García"
+                    },
+                    "email": {
+                        "type": "string",
+                        "example": "ana@correo.com"
+                    },
+                    "grupo_id": {
+                        "type": "integer",
+                        "example": 2
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Alumnos",
+            "description": "Alumnos"
+        },
+        {
+            "name": "Entregas",
+            "description": "Entregas"
+        }
+    ]
+}

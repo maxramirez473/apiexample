@@ -7,10 +7,49 @@ use App\Models\Entrega;
 use App\Models\Grupo;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Str;
+use OpenApi\Attributes as OA;
+
 
 class EntregaController extends Controller
 {
+    #[OA\Post(
+        path: '/api/grupos/{grupo}/entregas',
+        operationId: 'createEntregaSinIdempotencia',
+        summary: 'Crear entrega sin idempotencia',
+        tags: ['Entregas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'grupo',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['entrega', 'archivo', 'comentario'],
+                properties: [
+                    new OA\Property(
+                        property: 'entrega',
+                        type: 'object',
+                        required: ['nombre', 'fecha_entrega'],
+                        properties: [
+                            new OA\Property(property: 'nombre', type: 'string', example: 'TP 1'),
+                            new OA\Property(property: 'fecha_entrega', type: 'string', format: 'date', example: '2026-08-20'),
+                        ]
+                    ),
+                    new OA\Property(property: 'archivo', type: 'string', example: 'archivo.pdf'),
+                    new OA\Property(property: 'comentario', type: 'string', example: 'Entrega del grupo'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Entrega asociada correctamente'),
+            new OA\Response(response: 409, description: 'Conflicto de datos duplicados'),
+            new OA\Response(response: 422, description: 'Payload inválido')
+        ]
+    )]
     public function storeWithoutIdempotency(Request $request, Grupo $grupo)
     {
         $data = $request->validate([
@@ -21,12 +60,10 @@ class EntregaController extends Controller
             'comentario' => ['required', 'string', 'max:250'],
         ]);
 
-        $entrega = Entrega::firstOrCreate(
-            [
-                'nombre' => $data['entrega']['nombre'],
-                'fecha_entrega' => $data['entrega']['fecha_entrega'],
-            ]
-        );
+        $entrega = Entrega::firstOrCreate([
+            'nombre' => $data['entrega']['nombre'],
+            'fecha_entrega' => $data['entrega']['fecha_entrega'],
+        ]);
 
         try {
             $grupo->entregas()->syncWithoutDetaching([
@@ -39,9 +76,7 @@ class EntregaController extends Controller
 
             return response()->json([
                 'message' => 'Entrega asociada al grupo.',
-                'data' => $grupo->entregas()->where('entregas.id', $entrega->id)->first(),
             ], 201);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'La entrega ya existe para este grupo.',
@@ -50,6 +85,52 @@ class EntregaController extends Controller
         }
     }
 
+    #[OA\Post(
+        path: '/api/grupos/{grupo}/entregas/idempotent',
+        operationId: 'createEntregaConIdempotencia',
+        summary: 'Crear entrega con idempotencia',
+        tags: ['Entregas'],
+        parameters: [
+            new OA\Parameter(
+                name: 'grupo',
+                in: 'path',
+                required: true,
+                schema: new OA\Schema(type: 'integer')
+            ),
+            new OA\Parameter(
+                name: 'Idempotency-Key',
+                in: 'header',
+                required: true,
+                description: 'Clave para evitar reenvíos duplicados',
+                schema: new OA\Schema(type: 'string')
+            )
+        ],
+        requestBody: new OA\RequestBody(
+            required: true,
+            content: new OA\JsonContent(
+                required: ['entrega', 'archivo', 'comentario'],
+                properties: [
+                    new OA\Property(
+                        property: 'entrega',
+                        type: 'object',
+                        required: ['nombre', 'fecha_entrega'],
+                        properties: [
+                            new OA\Property(property: 'nombre', type: 'string', example: 'TP 1'),
+                            new OA\Property(property: 'fecha_entrega', type: 'string', format: 'date', example: '2026-08-20'),
+                        ]
+                    ),
+                    new OA\Property(property: 'archivo', type: 'string', example: 'archivo.pdf'),
+                    new OA\Property(property: 'comentario', type: 'string', example: 'Entrega del grupo'),
+                ]
+            )
+        ),
+        responses: [
+            new OA\Response(response: 201, description: 'Entrega creada con idempotencia'),
+            new OA\Response(response: 200, description: 'Reintento repetido con la misma clave'),
+            new OA\Response(response: 409, description: 'Conflicto de datos duplicados'),
+            new OA\Response(response: 422, description: 'Falta Idempotency-Key o payload inválido')
+        ]
+    )]
     public function storeWithIdempotency(Request $request, Grupo $grupo)
     {
         $key = $request->header('Idempotency-Key');
@@ -90,13 +171,11 @@ class EntregaController extends Controller
 
             $payload = [
                 'message' => 'Entrega asociada con idempotencia.',
-                'data' => $grupo->entregas()->where('entregas.id', $entrega->id)->first(),
             ];
 
             Cache::put($cacheKey, $payload, now()->addDay());
 
             return response()->json($payload, 201);
-
         } catch (\Throwable $e) {
             return response()->json([
                 'message' => 'La entrega ya existe para este grupo.',

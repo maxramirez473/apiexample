@@ -3,47 +3,59 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\Evaluacion;
 use Illuminate\Http\Request;
 
 class EvaluacionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        //
+        return response()->json(Evaluacion::all(), 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'nombre' => ['required', 'string', 'max:20'],
+            'nota_minima_aprobacion' => ['required', 'integer', 'min:0', 'max:10'],
+            'nota_minima_promocion' => ['required', 'integer', 'min:0', 'max:10'],
+        ]);
+
+        $evaluacion = Evaluacion::create($data);
+
+        return response()->json($evaluacion, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(Evaluacion $evaluacion)
     {
-        //
+        return response()->json($evaluacion->load('alumnos'), 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function update(Request $request, Evaluacion $evaluacion)
     {
-        //
+        $data = $request->validate([
+            'nombre' => ['sometimes', 'string', 'max:20'],
+            'nota_minima_aprobacion' => ['sometimes', 'integer', 'min:0', 'max:10'],
+            'nota_minima_promocion' => ['sometimes', 'integer', 'min:0', 'max:10'],
+        ]);
+
+        $evaluacion->update($data);
+
+        return response()->json($evaluacion, 200);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
+    public function destroy(Evaluacion $evaluacion)
     {
-        //
+        $evaluacion->delete();
+
+        return response()->json(null, 204);
+    }
+
+    public function alumnos(Evaluacion $evaluacion)
+    {
+        return response()->json(
+            $evaluacion->alumnos()->withPivot('nota', 'fecha_evaluacion')->get(),
+            200
+        );
     }
 }
