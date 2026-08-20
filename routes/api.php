@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AlumnoController;
 use App\Http\Controllers\Api\EvaluacionController;
 use App\Http\Controllers\Api\GrupoController;
+use App\Http\Controllers\Api\EntregaController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,6 @@ Route::post('alumnos/{alumno}/evaluaciones', [AlumnoController::class, 'addEvalu
 
 Route::apiResource('evaluaciones', EvaluacionController::class);
 Route::get('evaluaciones/{evaluacion}/alumnos', [EvaluacionController::class, 'alumnos']);
+
+Route::post('grupos/{grupo}/entregas', [EntregaController::class, 'storeWithoutIdempotency']);
+Route::post('grupos/{grupo}/entregas/idempotent', [EntregaController::class, 'storeWithIdempotency']);
