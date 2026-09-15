@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('evaluaciones', function (Blueprint $table) {
             $table->id();
             $table->string('nombre', 20);
-            $table->integer('nota_minima_aprobacion');
-            $table->integer('nota_minima_promocion');
+            $table->integer('nota_minima_aprobacion')->default(4);
+            $table->integer('nota_minima_promocion')->default(6);
             $table->timestamps();
         });
     }

@@ -14,10 +14,9 @@ return new class extends Migration
         Schema::create('alumnos', function (Blueprint $table) {
             $table->id();
             $table->integer('legajo');
-            $table->string('nombres', 50);
-            $table->string('apellidos', 50);
-            $table->string('email',50);
-            $table->foreignId('grupo_id')->constrained('grupos');
+            $table->string('nombres', 100);
+            $table->string('apellidos', 100);
+            $table->foreignId('grupo_id')->nullable()->constrained('grupos')->nullOnDelete();
             $table->timestamps();
         });
     }

@@ -8,13 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Alumno extends Model
 {
     use HasFactory;
-    public $database = 'alumnos';
+    public $table = 'alumnos';
 
     protected $fillable = [
         'legajo',
         'nombres',
         'apellidos',
-        'email',
     ];
 
     public function grupo()
