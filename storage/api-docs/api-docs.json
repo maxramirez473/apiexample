@@ -560,6 +560,242 @@
                     }
                 }
             }
+        },
+        "/api/evaluaciones": {
+            "get": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Listar evaluaciones",
+                "operationId": "getEvaluaciones",
+                "responses": {
+                    "200": {
+                        "description": "Listado de evaluaciones",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "array",
+                                    "items": {
+                                        "$ref": "#/components/schemas/Evaluacion"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "post": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Crear evaluacion",
+                "operationId": "createEvaluacion",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "required": [
+                                    "nombre",
+                                    "nota_minima_aprobacion",
+                                    "nota_minima_promocion"
+                                ],
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Parcial 1"
+                                    },
+                                    "nota_minima_aprobacion": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "nota_minima_promocion": {
+                                        "type": "integer",
+                                        "example": 7
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Evaluacion creada"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/evaluaciones/{id}": {
+            "get": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Obtener evaluacion por id",
+                "operationId": "getEvaluacionById",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Evaluacion encontrada",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Evaluacion"
+                                }
+                            }
+                        }
+                    },
+                    "404": {
+                        "description": "Evaluacion no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "put": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Actualizar evaluacion",
+                "operationId": "updateEvaluacion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "nombre": {
+                                        "type": "string",
+                                        "example": "Parcial 1"
+                                    },
+                                    "nota_minima_aprobacion": {
+                                        "type": "integer",
+                                        "example": 4
+                                    },
+                                    "nota_minima_promocion": {
+                                        "type": "integer",
+                                        "example": 7
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Evaluacion actualizada"
+                    },
+                    "422": {
+                        "description": "Datos inválidos"
+                    },
+                    "404": {
+                        "description": "Evaluacion no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            },
+            "delete": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Eliminar evaluacion",
+                "operationId": "deleteEvaluacion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "204": {
+                        "description": "Evaluacion eliminada"
+                    },
+                    "404": {
+                        "description": "Evaluacion no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
+        },
+        "/api/evaluaciones/{id}/alumnos": {
+            "get": {
+                "tags": [
+                    "Evaluaciones"
+                ],
+                "summary": "Obtener alumnos de una evaluacion",
+                "operationId": "getAlumnosByEvaluacion",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "required": true,
+                        "schema": {
+                            "type": "integer"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Alumnos obtenidos"
+                    },
+                    "404": {
+                        "description": "Evaluacion no encontrada"
+                    }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
+            }
         }
     },
     "components": {
@@ -627,6 +863,32 @@
                     }
                 },
                 "type": "object"
+            },
+            "Evaluacion": {
+                "required": [
+                    "nombre",
+                    "nota_minima_aprobacion",
+                    "nota_minima_promocion"
+                ],
+                "properties": {
+                    "id": {
+                        "type": "integer",
+                        "example": 1
+                    },
+                    "nombre": {
+                        "type": "string",
+                        "example": "Parcial 1"
+                    },
+                    "nota_minima_aprobacion": {
+                        "type": "integer",
+                        "example": 4
+                    },
+                    "nota_minima_promocion": {
+                        "type": "integer",
+                        "example": 7
+                    }
+                },
+                "type": "object"
             }
         },
         "securitySchemes": {
@@ -650,6 +912,10 @@
         {
             "name": "Entregas",
             "description": "Entregas"
+        },
+        {
+            "name": "Evaluaciones",
+            "description": "Evaluaciones"
         }
     ],
     "security": [
