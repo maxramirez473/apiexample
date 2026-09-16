@@ -27,7 +27,6 @@ class AlumnoController extends Controller
             new OA\Property(property: 'grupo_id', type: 'integer', example: 2),
         ]
     )]
-    public function index() {}
 
     #[OA\Get(
         path: '/api/alumnos',
@@ -46,10 +45,11 @@ class AlumnoController extends Controller
             )
         ]
     )]
-    public function list()
-    {
+    public function index() {
         return response()->json(Alumno::with('grupo')->get(), 200);
     }
+
+    
 
     #[OA\Post(
         path: '/api/alumnos',
