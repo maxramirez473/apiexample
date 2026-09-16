@@ -145,12 +145,7 @@ class AuthController extends Controller
         operationId: 'logout',
         summary: 'Cerrar sesión',
         tags: ['Auth'],
-        security: [[new OA\SecurityScheme(
-            securityScheme: 'bearerAuth',
-            type: 'http',
-            scheme: 'bearer',
-            bearerFormat: 'JWT'
-        )]],
+        security: [['sanctum' => []]],
         responses: [
             new OA\Response(
                 response: 200,

@@ -34,6 +34,7 @@ class AlumnoController extends Controller
         operationId: 'getAlumnos',
         summary: 'Listar alumnos',
         tags: ['Alumnos'],
+        security: [['sanctum' => []]],
         responses: [
             new OA\Response(
                 response: 200,
@@ -55,6 +56,7 @@ class AlumnoController extends Controller
         operationId: 'createAlumno',
         summary: 'Crear alumno',
         tags: ['Alumnos'],
+        security: [['sanctum' => []]],
         requestBody: new OA\RequestBody(
             required: true,
             content: new OA\JsonContent(
@@ -93,6 +95,7 @@ class AlumnoController extends Controller
         operationId: 'getAlumnoById',
         summary: 'Obtener alumno por id',
         tags: ['Alumnos'],
+        security: [['sanctum' => []]],
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -120,6 +123,7 @@ class AlumnoController extends Controller
         operationId: 'getAlumnoEvaluaciones',
         summary: 'Listar evaluaciones del alumno',
         tags: ['Alumnos'],
+        security: [['sanctum' => []]],
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -145,6 +149,7 @@ class AlumnoController extends Controller
         operationId: 'associateAlumnoEvaluacion',
         summary: 'Asignar evaluación a un alumno',
         tags: ['Alumnos'],
+        security: [['sanctum' => []]],
         parameters: [
             new OA\Parameter(
                 name: 'id',

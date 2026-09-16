@@ -27,7 +27,12 @@
                             }
                         }
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -81,7 +86,12 @@
                     "422": {
                         "description": "Datos inválidos"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/alumnos/{id}": {
@@ -115,7 +125,12 @@
                     "404": {
                         "description": "Alumno no encontrado"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/alumnos/{id}/evaluaciones": {
@@ -139,7 +154,12 @@
                     "200": {
                         "description": "Listado de evaluaciones"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             },
             "post": {
                 "tags": [
@@ -197,7 +217,12 @@
                     "422": {
                         "description": "Payload inválido"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "sanctum": []
+                    }
+                ]
             }
         },
         "/api/register": {
@@ -373,12 +398,7 @@
                 },
                 "security": [
                     {
-                        "0": {
-                            "securityScheme": "bearerAuth",
-                            "type": "http",
-                            "bearerFormat": "JWT",
-                            "scheme": "bearer"
-                        }
+                        "sanctum": []
                     }
                 ]
             }
@@ -608,6 +628,14 @@
                 },
                 "type": "object"
             }
+        },
+        "securitySchemes": {
+            "sanctum": {
+                "type": "apiKey",
+                "description": "Ingrese el token en formato: Bearer <token>",
+                "name": "Authorization",
+                "in": "header"
+            }
         }
     },
     "tags": [
@@ -622,6 +650,11 @@
         {
             "name": "Entregas",
             "description": "Entregas"
+        }
+    ],
+    "security": [
+        {
+            "sanctum": []
         }
     ]
 }
