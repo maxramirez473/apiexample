@@ -20,7 +20,6 @@ class DatabaseSeeder extends Seeder
             AlumnoSeeder::class,
             EntregaSeeder::class,
             EvaluacionSeeder::class,
-            AlumnoSeeder::class
         ]);
     }
 }
