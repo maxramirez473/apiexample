@@ -123,7 +123,7 @@ class AuthController extends Controller
         ]);
 
         if (!Auth::attempt($credentials)) {
-            return response()->json(['message' => 'Credenciales inválidas'], 401);
+            return response()->json(['message' => 'Credenciales inválidas'], 200);
         }
 
         $user = Auth::user();
