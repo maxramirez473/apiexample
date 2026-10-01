@@ -1,0 +1,39 @@
+name: Tests
+
+# Railway necesita que el workflow corra en push sobre la rama que despliega.
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar el repositorio
+        uses: actions/checkout@v4
+
+      - name: Instalar PHP 8.2
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          extensions: mbstring, pdo_sqlite, sqlite3
+          coverage: none
+
+      # key:generate necesita que el .env exista y tenga la línea APP_KEY=
+      - name: Crear .env mínimo
+        run: echo "APP_KEY=" > .env
+
+      - name: Instalar dependencias
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Generar APP_KEY
+        run: php artisan key:generate
+
+      - name: Ejecutar tests
+        run: php artisan test
+        env:
+          # Los tests corren contra SQLite en memoria: no necesitan MySQL.
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
